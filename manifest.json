@@ -1,0 +1,12 @@
+{
+  "name": "Snake",
+  "description": "It's Snake, duh.",
+  "manifest_version": 2,
+  "version": "0.1",
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": ["experimental", "appWindow"]
+}
