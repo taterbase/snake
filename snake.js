@@ -12,30 +12,20 @@ var antiArrows = {
   "DOWN": "UP"
 };
 
-var moved = false;
-
-var pos = {
-  x: 0,
-  y: 0
+var Snake = {
+  moved : false,
+  pos : {
+    x: 250,
+    y: 250
+  },
+  direction: "RIGHT",
+  context: null,
+  canvas: null
 };
 
-var context
-  , direction = "RIGHT"
-  , canvas = document.getElementById('board');
-
-window.onload = function(){
-  if(canvas.getContext){
-    context = canvas.getContext('2d');
-    drawSnake(context, pos);
-  }
-
-  setInterval(function(){
-    move(direction);
-  }, 500);
-};
-
-function move(direction){
-  switch(direction){
+function move(Snake){
+  var pos = Snake.pos;
+  switch(Snake.direction){
     case "LEFT":
       pos.x-= 5;
       break;
@@ -52,29 +42,46 @@ function move(direction){
   //Check to make sure we're not at the wall
   for(var p in pos){
     if(pos[p] < 0)
-      die();
+      kill(Snake);
     else if(pos[p]>485){
-      die();
+      kill(Snake);
     }
   }
-  drawSnake(context, pos);
+  Snake.pos = pos;
+  drawSnake(Snake);
 }
 
-function die(){
-  pos.x = 0;
-  pos.y = 0;
-  direction = "RIGHT";
+function kill(Snake){
+  Snake.pos.x = 250;
+  Snake.pos.y = 250;
+  Snake.direction = "RIGHT";
 }
 
-function drawSnake(context, pos){
-  canvas.width = canvas.width; //clears canvas
-  moved = true;
-  context.fillRect(pos.x, pos.y, 15, 15);
+function drawSnake(Snake){
+  var pos = Snake.pos;
+
+  Snake.canvas.width = Snake.canvas.width; //clears canvas
+  Snake.moved = true;
+  Snake.context.fillRect(pos.x, pos.y, 15, 15);
 }
 
 document.onkeydown = function(e){
-  if(moved && arrows[e.keyCode] && direction !== antiArrows[arrows[e.keyCode]]){
-    direction = arrows[e.keyCode];
-    moved = false;
+  if(Snake.moved && arrows[e.keyCode] && Snake.direction !== antiArrows[arrows[e.keyCode]]){
+    Snake.direction = arrows[e.keyCode];
+    Snake.moved = false;
   }
 };
+
+(function(){
+  Snake.canvas = document.getElementById('board');
+  window.onload = function(){
+    if(Snake.canvas.getContext){
+      Snake.context = Snake.canvas.getContext('2d');
+      drawSnake(Snake);
+    }
+
+    setInterval(function(){
+      move(Snake);
+    }, 500);
+};
+}(Snake));
